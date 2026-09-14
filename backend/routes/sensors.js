@@ -16,26 +16,26 @@ router.get('/', async (req, res) => {
         const result = await pool.query(
             `
             SELECT
-                fc.id,
-                fc.segment_id AS "segmentId",
+                s.id,
+                s.segment_id AS "segmentId",
                 rs.segment_order AS "segmentOrder",
-                fc.measured_at AS "measuredAt",
-                fc.direction,
-                fc.speed_kmh AS "speedKmh"
-            FROM flow_conditions fc
-            JOIN river_segments rs ON rs.id = fc.segment_id
+                rs.name AS "segmentName",
+                s.name,
+                s.is_active AS "isActive"
+            FROM sensors s
+            JOIN river_segments rs ON rs.id = s.segment_id
             WHERE rs.river_id = $1
-            ORDER BY fc.measured_at, rs.segment_order
+            ORDER BY rs.segment_order, s.id
             `,
             [riverId]
         );
 
         res.json(result.rows);
     } catch (error) {
-        console.log('Error loading flow conditions:', error);
+        console.log('Error loading sensors:', error);
 
         res.status(500).json({
-            error: 'Failed to load flow conditions'
+            error: 'Failed to load sensors'
         });
     }
 });

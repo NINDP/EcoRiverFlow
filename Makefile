@@ -1,5 +1,3 @@
-# EcoRiverFlow Makefile
-
 APP_NAME = EcoRiverFlow
 
 CPP_DIR = cpp

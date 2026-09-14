@@ -1,11 +1,271 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoRiverFlow</title>
+
+    <link rel="stylesheet" href="./styles.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link 
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" 
+        rel="stylesheet"
+    >
 </head>
+
 <body>
+    <header class="header">
+        <nav class="navigation">
+            <img 
+                src="./src/images/Лого.svg" 
+                alt="EcoRiverFlow logo" 
+                class="navigation__logo"
+            >
+
+            <p class="navigation__description">
+                Система мониторинга и прогноза загрязнения рек
+            </p>
+        </nav>
+    </header>
+
+    <main class="main">
+        <div class="dashboard-layout">
+            <section class="simulation-panel">
+                <header class="simulation-panel__header">
+                    <img 
+                        src="./src/images/settings_icon.svg" 
+                        alt="" 
+                        class="simulation-panel__icon"
+                    >
     
+                    <h2 class="simulation-panel__title">
+                        Параметры симуляции
+                    </h2>
+                </header>
+    
+                <form class="simulation-form">
+                    <label class="form-group">
+                        <span class="form-group__title">Источник загрязнения:</span>
+    
+                        <select class="form-group__select source-pollution" name="sourceSegment">
+                            <option value="">Загрузка...</option>
+                        </select>
+                    </label>
+    
+                    <label class="form-group">
+                        <span class="form-group__title">Тип загрязнителя:</span>
+    
+                        <select class="form-group__select type-pollutant" name="pollutant">
+                            <option value="">Загрузка...</option>
+                        </select>
+                    </label>
+    
+                    <label class="form-group">
+                        <span class="form-group__title">Начальная концентрация (ppm):</span>
+    
+                        <input 
+                            type="number" 
+                            min="0" 
+                            max="100" 
+                            value="80" 
+                            name="initialConcentration"
+                            class="form-group__input initial-concentration"
+                        >
+                    </label>
+    
+                    <label class="form-group">
+                        <span class="form-group__title">Прогноз на:</span>
+    
+                        <select class="form-group__select time-pollution" name="forecastHours">
+                            <option value="">Загрузка...</option>
+                        </select>
+                    </label>
+    
+                    <button class="simulation-panel__button" type="submit">
+                        <img src="./src/images/play.svg" alt="" class="button-icon">
+                        <span>Запустить симуляцию</span>
+                    </button>
+    
+                    <button class="simulation-panel__reset" type="button" id="reset-simulation">
+                        Сброс
+                    </button>
+                </form>
+            </section>
+    
+            <section class="river-panel">
+                <header class="river-panel__header">
+                    <img src="./src/images/river.svg" alt="" class="river-panel__logo">
+    
+                    <h2 class="river-panel__title">
+                        Схема реки
+                    </h2>
+                </header>
+    
+                <div class="river-map">
+                    <div class="river-scroll">
+                        <div class="river-visual" id="river-visual">
+                            <div class="pollution-marker is-hidden" id="pollution-marker">
+                                <span>Источник загрязнения</span>
+                                <strong id="pollution-marker-text">Участок 3</strong>
+                            </div>
+    
+                            <svg 
+                                class="river-svg" 
+                                viewBox="0 0 1000 180" 
+                                preserveAspectRatio="none"
+                                aria-hidden="true"
+                            >
+                                <defs>
+                                    <linearGradient id="riverGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#bfe0fb"></stop>
+                                        <stop offset="45%" stop-color="#bfe0fb"></stop>
+                                        <stop offset="55%" stop-color="#ffaaa8"></stop>
+                                        <stop offset="75%" stop-color="#ffd58a"></stop>
+                                        <stop offset="100%" stop-color="#ffe899"></stop>
+                                    </linearGradient>
+                                </defs>
+    
+                                <path
+                                    class="river-shape"
+                                    d="
+                                        M 0 65
+                                        C 80 35, 130 35, 200 65
+                                        C 270 95, 330 95, 400 65
+                                        C 470 35, 530 35, 600 65
+                                        C 670 95, 730 95, 800 65
+                                        C 870 35, 930 35, 1000 65
+                                        L 1000 130
+                                        C 930 105, 870 105, 800 130
+                                        C 730 155, 670 155, 600 130
+                                        C 530 105, 470 105, 400 130
+                                        C 330 155, 270 155, 200 130
+                                        C 130 105, 80 105, 0 130
+                                        Z
+                                    "
+                                ></path>
+                            </svg>
+    
+                            <div class="river-columns" id="river-columns"></div>
+                        </div>
+                    </div>
+    
+                    <footer class="river-map__footer">
+                        <div class="legend">
+                            <p class="legend__title">Концентрация загрязнителя (ppm)</p>
+    
+                            <div class="legend__bar"></div>
+    
+                            <div class="legend__numbers">
+                                <span>0</span>
+                                <span>25</span>
+                                <span>50</span>
+                                <span>75</span>
+                                <span>100+</span>
+                            </div>
+                        </div>
+    
+                        <div class="flow-direction">
+                            <span class="flow-direction__arrow">→</span>
+                            <span id="flow-direction-text">Направление течения</span>
+                        </div>
+                    </footer>
+                </div>
+            </section>
+    
+            <aside class="diagnostics-panel">
+                <header class="diagnostics-panel__header">
+                    <span class="diagnostics-panel__icon">⌁</span>
+                    <h2 class="diagnostics-panel__title">Диагностика</h2>
+                </header>
+    
+                <div class="diagnostics-card">
+                    <span class="diagnostics-card__label">Вероятный источник:</span>
+                    <strong class="diagnostics-card__value" id="diagnostic-source">—</strong>
+                </div>
+    
+                <div class="diagnostics-card">
+                    <span class="diagnostics-card__label">Уровень опасности:</span>
+                    <strong class="diagnostics-card__value diagnostics-card__value--danger" id="diagnostic-risk">—</strong>
+                </div>
+    
+                <div class="diagnostics-card">
+                    <span class="diagnostics-card__label">Направление течения:</span>
+                    <strong class="diagnostics-card__value" id="diagnostic-flow">—</strong>
+                </div>
+    
+                <p class="diagnostics-panel__text" id="diagnostic-description">
+                    Данные загружаются...
+                </p>
+    
+                <div class="warning-box is-hidden" id="warning-box">
+                    <strong>ВНИМАНИЕ!</strong>
+                    <span>Высокая концентрация загрязнителя может повлиять на экосистему реки.</span>
+                </div>
+            </aside>
+        </div>
+    
+        <div class="bottom-layout">
+            <section class="metrics-panel">
+                <header class="section-header">
+                    <h2 class="section-title">Ключевые показатели</h2>
+                </header>
+    
+                <div class="metrics-grid">
+                    <article class="metric-card">
+                        <span class="metric-card__icon">≋</span>
+                        <span class="metric-card__label">Скорость течения</span>
+                        <strong class="metric-card__value" id="metric-flow-speed">—</strong>
+                        <span class="metric-card__hint">Среднее значение</span>
+                    </article>
+    
+                    <article class="metric-card">
+                        <span class="metric-card__icon">☘</span>
+                        <span class="metric-card__label">Самоочищение</span>
+                        <strong class="metric-card__value" id="metric-cleaning">—</strong>
+                        <span class="metric-card__hint">Средний уровень</span>
+                    </article>
+    
+                    <article class="metric-card">
+                        <span class="metric-card__icon">⌁</span>
+                        <span class="metric-card__label">Датчики онлайн</span>
+                        <strong class="metric-card__value" id="metric-sensors">—</strong>
+                        <span class="metric-card__hint">Сеть стабильна</span>
+                    </article>
+    
+                    <article class="metric-card">
+                        <span class="metric-card__icon">☁</span>
+                        <span class="metric-card__label">Зона риска</span>
+                        <strong class="metric-card__value" id="metric-risk-distance">—</strong>
+                        <span class="metric-card__hint">Ниже по течению</span>
+                    </article>
+                </div>
+            </section>
+    
+            <section class="forecast-panel">
+                <header class="section-header">
+                    <h2 class="section-title">Концентрация по времени</h2>
+                    <span class="section-subtitle" id="forecast-title">Прогноз не запущен</span>
+                </header>
+    
+                <div class="forecast-chart" id="forecast-chart">
+                    <p class="empty-state">Запустите симуляцию, чтобы увидеть график прогноза.</p>
+                </div>
+            </section>
+    
+            <aside class="events-panel">
+                <header class="section-header">
+                    <h2 class="section-title">Последние события</h2>
+                </header>
+    
+                <div class="events-list" id="events-list">
+                    <p class="empty-state">Событий пока нет.</p>
+                </div>
+            </aside>
+        </div>
+    </main>
+    <script src="./wasm/ecoriver.js"></script>
+    <script src="./script.js"></script>
 </body>
 </html>
